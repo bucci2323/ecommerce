@@ -1,0 +1,17 @@
+
+node_modules/
+
+README.md
+
+
+.env
+
+
+dist/
+build/
+
+.vscode/
+
+*.tsbuildinfo
+
+
