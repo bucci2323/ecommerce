@@ -49,15 +49,28 @@ export const updateProduct = async (req: Request, res: Response) => {
 
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
+    const productId = Number(req.params.id);
+    if (isNaN(productId)) {
+      return res.status(400).json({ error: 'Invalid product ID' });
+    }
+
     const deleted = await Product.destroy({
-      where: { id: req.params.id }
+      where: { id: productId }
     });
+
     if (deleted) {
-      res.status(204).send();
+      res.status(200).json({ 
+        success: true,
+        message: 'Product deleted successfully'
+      });
     } else {
       res.status(404).json({ error: 'Product not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting product' });
+    console.error('Error deleting product:', error);
+    res.status(500).json({ 
+      error: 'Error deleting product',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }; 

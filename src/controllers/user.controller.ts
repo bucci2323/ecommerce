@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 export const createUser = async (req: Request, res: Response) => {
   try {
 
-    // Check if email already exists
     const existingUser = await User.findOne({
       where: { email: req.body.email }
     });
@@ -15,16 +14,16 @@ export const createUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
-    // Hash password
+
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     
-    // Create user with hashed password
+
     const user = await User.create({
       ...req.body,
       password: hashedPassword
     });
 
-    // Generate JWT token
+
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -60,13 +59,15 @@ export const getUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User is  not found !!!' });
     }
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching user' });
+    res.status(500).json({ error: 'Error finding user' });
   }
 };
+
+
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
@@ -77,19 +78,19 @@ export const updateUser = async (req: Request, res: Response) => {
 
     console.log('Updating user:', userId, 'Request body:', req.body);
     
-    // Check if user exists
+// this user dey exist at all 
     const user = await User.findByPk(userId);
     if (!user) {
       console.log('User not found:', userId);
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Check if user is updating their own profile or is an admin
+    // check if the user is updating his/her profile or na admin dey update 
     if (req.user?.id !== userId && req.user?.role !== 'admin') {
       return res.status(403).json({ error: 'Not authorized to update this user' });
     }
 
-    // If email is being updated, check if it already exists
+
     if (req.body.email) {
       const existingUser = await User.findOne({
         where: { email: req.body.email }
@@ -100,8 +101,7 @@ export const updateUser = async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'Email already exists' });
       }
     }
-
-    // If password is being updated, hash it
+    // hash password if its being updated , it will uodate and hash the password
     if (req.body.password) {
       console.log('Password update detected, hashing...');
       req.body.password = await bcrypt.hash(req.body.password, 10);
@@ -136,16 +136,29 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
+    const userId = Number(req.params.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
     const deleted = await User.destroy({
-      where: { id: req.params.id }
+      where: { id: userId }
     });
+
     if (deleted) {
-      res.status(204).send();
+      res.status(200).json({ 
+        success: true,
+        message: 'User deleted successfully'
+      });
     } else {
       res.status(404).json({ error: 'User not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting user' });
+    console.error('Error deleting user:', error);
+    res.status(500).json({ 
+      error: 'Error deleting user',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 

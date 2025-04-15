@@ -5,7 +5,7 @@ import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
-// Public routes
+
 router.post('/login', (async (req, res) => {
   await login(req, res);
 }) as RequestHandler);
@@ -14,7 +14,10 @@ router.post('/', (async (req, res) => {
   await createUser(req, res);
 }) as RequestHandler);
 
-// Protected routes
+
+// from here down are the routes that uses authenicationa nd authorization
+
+
 router.get('/', authenticate, (async (req, res) => {
   await getUsers(req, res);
 }) as RequestHandler);
@@ -41,7 +44,7 @@ router.put('/:id', authenticate, (async (req, res) => {
   await updateUser(req, res);
 }) as RequestHandler);
 
-// Delete user route (admin only)
+// Delete user route  (admin only can delete a user sha)
 router.delete('/:id', authenticate, authorize(['admin']), (async (req, res) => {
   const userId = Number(req.params.id);
   if (isNaN(userId)) {
@@ -51,3 +54,4 @@ router.delete('/:id', authenticate, authorize(['admin']), (async (req, res) => {
 }) as RequestHandler);
 
 export default router; 
+

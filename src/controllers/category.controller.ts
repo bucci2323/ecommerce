@@ -49,15 +49,28 @@ export const updateCategory = async (req: Request, res: Response) => {
 
 export const deleteCategory = async (req: Request, res: Response) => {
   try {
+    const categoryId = Number(req.params.id);
+    if (isNaN(categoryId)) {
+      return res.status(400).json({ error: 'Invalid category ID' });
+    }
+
     const deleted = await Category.destroy({
-      where: { id: req.params.id }
+      where: { id: categoryId }
     });
+
     if (deleted) {
-      res.status(204).send();
+      res.status(200).json({ 
+        success: true,
+        message: 'Category deleted successfully'
+      });
     } else {
       res.status(404).json({ error: 'Category not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Error deleting category' });
+    console.error('Error deleting category:', error);
+    res.status(500).json({ 
+      error: 'Error deleting category',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }; 
