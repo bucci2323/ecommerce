@@ -1,32 +1,32 @@
-import express from 'express';
+import { Router } from 'express';
 import { RequestHandler } from '../types/express';
-import { createCart, getCart, addCartItem, updateCartItem, deleteCartItem } from '../controllers/cart.controller';
+import { authenticate } from '../middleware/auth.middleware';
+import {
+  createCart,
+  getCart,
+  addCartItem,
+  updateCartItem,
+  deleteCartItem
+} from '../controllers/cart.controller';
 
-const router = express.Router();
+const router = Router();
+
+// All cart routes require authentication
+router.use(authenticate);
 
 // Create a new cart
-router.post('/', (async (req, res) => {
-  await createCart(req, res);
-}) as RequestHandler);
+router.post('/', createCart as RequestHandler);
 
 // Get user's cart
-router.get('/:id', (async (req, res) => {
-  await getCart(req, res);
-}) as RequestHandler);
+router.get('/', getCart as RequestHandler);
 
 // Add item to cart
-router.post('/:cartId/items', (async (req, res) => {
-  await addCartItem(req, res);
-}) as RequestHandler);
+router.post('/items', addCartItem as RequestHandler);
 
 // Update cart item quantity
-router.put('/items/:id', (async (req, res) => {
-  await updateCartItem(req, res);
-}) as RequestHandler);
+router.put('/items/:id', updateCartItem as RequestHandler);
 
 // Remove item from cart
-router.delete('/items/:id', (async (req, res) => {
-  await deleteCartItem(req, res);
-}) as RequestHandler);
+router.delete('/items/:id', deleteCartItem as RequestHandler);
 
 export default router; 

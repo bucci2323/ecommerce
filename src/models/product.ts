@@ -9,7 +9,6 @@ export class Product extends Model {
   public stock!: number;
   public imageUrl!: string;
   public categoryId!: number;
-  public isActive!: boolean;
   public createdAt!: Date;
   public updatedAt!: Date;
 
@@ -50,20 +49,13 @@ export class Product extends Model {
             key: 'id',
           },
         },
-        isActive: {
-          type: DataTypes.BOOLEAN,
-          allowNull: false,
-          defaultValue: true,
-        },
         createdAt: {
           type: DataTypes.DATE,
           allowNull: false,
-
         },
         updatedAt: {
           type: DataTypes.DATE,
           allowNull: false,
-
         },
       },
       {
