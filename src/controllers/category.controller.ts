@@ -3,10 +3,42 @@ import { Category } from '../models';
 
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    const category = await Category.create(req.body);
-    res.status(201).json(category);
+    const { name, description, parentId } = req.body;
+
+    // Validate required fields
+    if (!name) {
+      return res.status(400).json({ error: 'Category name is required' });
+    }
+
+    // Convert parentId to number if provided
+    let numericParentId = null;
+    if (parentId) {
+      numericParentId = Number(parentId);
+      if (isNaN(numericParentId)) {
+        return res.status(400).json({ error: 'Parent ID must be a valid number' });
+      }
+    }
+
+    const category = await Category.create({
+      name,
+      description,
+      parentId: numericParentId
+    });
+
+    // Fetch the created category to ensure we have all fields
+    const createdCategory = await Category.findByPk(category.id);
+    
+    if (!createdCategory) {
+      return res.status(500).json({ error: 'Error retrieving created category' });
+    }
+
+    res.status(201).json(createdCategory);
   } catch (error) {
-    res.status(400).json({ error: 'Error creating category' });
+    console.error('Error creating category:', error);
+    res.status(400).json({ 
+      error: 'Error creating category',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 

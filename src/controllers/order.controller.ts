@@ -3,10 +3,46 @@ import { Order, OrderItem } from '../models';
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const order = await Order.create(req.body);
-    res.status(201).json(order);
+    const { userId, status, totalAmount, shippingAddress, paymentMethod, paymentStatus } = req.body;
+
+    // Validate required fields
+    if (!userId || !totalAmount || !shippingAddress || !paymentMethod) {
+      return res.status(400).json({ error: 'User ID, total amount, shipping address, and payment method are required' });
+    }
+
+    // Convert IDs and amounts to numbers
+    const numericUserId = Number(userId);
+    const numericTotalAmount = Number(totalAmount);
+
+    if (isNaN(numericUserId) || isNaN(numericTotalAmount)) {
+      return res.status(400).json({ error: 'User ID and total amount must be valid numbers' });
+    }
+
+    const order = await Order.create({
+      userId: numericUserId,
+      status: status || 'pending',
+      totalAmount: numericTotalAmount,
+      shippingAddress,
+      paymentMethod,
+      paymentStatus: paymentStatus || 'pending'
+    });
+
+    // Fetch the created order to ensure we have all fields
+    const createdOrder = await Order.findByPk(order.id, {
+      include: [OrderItem]
+    });
+    
+    if (!createdOrder) {
+      return res.status(500).json({ error: 'Error retrieving created order' });
+    }
+
+    res.status(201).json(createdOrder);
   } catch (error) {
-    res.status(400).json({ error: 'Error creating order' });
+    console.error('Error creating order:', error);
+    res.status(400).json({ 
+      error: 'Error creating order',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 

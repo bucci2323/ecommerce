@@ -3,10 +3,43 @@ import { Review } from '../models';
 
 export const createReview = async (req: Request, res: Response) => {
   try {
-    const review = await Review.create(req.body);
-    res.status(201).json(review);
+    const { userId, productId, rating, comment } = req.body;
+
+    // Validate required fields
+    if (!userId || !productId || !rating) {
+      return res.status(400).json({ error: 'User ID, product ID, and rating are required' });
+    }
+
+    // Convert IDs to numbers
+    const numericUserId = Number(userId);
+    const numericProductId = Number(productId);
+    const numericRating = Number(rating);
+
+    if (isNaN(numericUserId) || isNaN(numericProductId) || isNaN(numericRating)) {
+      return res.status(400).json({ error: 'User ID, product ID, and rating must be valid numbers' });
+    }
+
+    const review = await Review.create({
+      userId: numericUserId,
+      productId: numericProductId,
+      rating: numericRating,
+      comment
+    });
+
+    // Fetch the created review to ensure we have all fields
+    const createdReview = await Review.findByPk(review.id);
+    
+    if (!createdReview) {
+      return res.status(500).json({ error: 'Error retrieving created review' });
+    }
+
+    res.status(201).json(createdReview);
   } catch (error) {
-    res.status(400).json({ error: 'Error creating review' });
+    console.error('Error creating review:', error);
+    res.status(400).json({ 
+      error: 'Error creating review',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 
