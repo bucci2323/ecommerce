@@ -19,12 +19,12 @@ router.get('/:id', (async (req, res) => {
   await getOrder(req, res);
 }) as RequestHandler);
 
-// Update an order
+// Update order
 router.put('/:id', (async (req, res) => {
   await updateOrder(req, res);
 }) as RequestHandler);
 
-// Delete an order
+// Delete  order
 router.delete('/:id', (async (req, res) => {
   await deleteOrder(req, res);
 }) as RequestHandler);
