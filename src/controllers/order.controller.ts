@@ -5,12 +5,12 @@ export const createOrder = async (req: Request, res: Response) => {
   try {
     const { userId, status, totalAmount, shippingAddress, paymentMethod, paymentStatus } = req.body;
 
-    // Validate required fields
+
     if (!userId || !totalAmount || !shippingAddress || !paymentMethod) {
       return res.status(400).json({ error: 'User ID, total amount, shipping address, and payment method are required' });
     }
 
-    // Convert IDs and amounts to numbers
+
     const numericUserId = Number(userId);
     const numericTotalAmount = Number(totalAmount);
 
@@ -27,7 +27,7 @@ export const createOrder = async (req: Request, res: Response) => {
       paymentStatus: paymentStatus || 'pending'
     });
 
-    // Fetch the created order to ensure we have all fields
+
     const createdOrder = await Order.findByPk(order.id, {
       include: [OrderItem]
     });

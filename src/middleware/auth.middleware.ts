@@ -30,14 +30,23 @@ export const authenticate = async (
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as {
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not defined');
+      res.status(500).json({ message: 'Server configuration error' });
+      return;
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
       id: number;
       email: string;
       role: string;
     };
 
     // Fetch the full user information from the database
-    const user = await User.findByPk(decoded.id);
+    const user = await User.findByPk(decoded.id, {
+      attributes: ['id', 'firstName', 'lastName', 'email', 'role']
+    });
+
     if (!user) {
       res.status(401).json({ message: 'User not found' });
       return;
@@ -53,7 +62,14 @@ export const authenticate = async (
     
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ message: 'Invalid token' });
+    } else if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ message: 'Token expired' });
+    } else {
+      console.error('Authentication error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 };
 
@@ -69,7 +85,11 @@ export const authorize = (roles: string[]) => {
     }
 
     if (!roles.includes(req.user.role)) {
-      res.status(403).json({ message: 'Access denied' });
+      res.status(403).json({ 
+        message: 'Access denied',
+        requiredRoles: roles,
+        userRole: req.user.role
+      });
       return;
     }
 

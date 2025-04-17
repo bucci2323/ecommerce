@@ -5,12 +5,12 @@ export const createCategory = async (req: Request, res: Response) => {
   try {
     const { name, description, parentId } = req.body;
 
-    // Validate required fields
+
     if (!name) {
       return res.status(400).json({ error: 'Category name is required' });
     }
 
-    // Convert parentId to number if provided
+
     let numericParentId = null;
     if (parentId) {
       numericParentId = Number(parentId);
@@ -25,7 +25,7 @@ export const createCategory = async (req: Request, res: Response) => {
       parentId: numericParentId
     });
 
-    // Fetch the created category to ensure we have all fields
+
     const createdCategory = await Category.findByPk(category.id);
     
     if (!createdCategory) {

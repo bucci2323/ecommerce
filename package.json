@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn src/index.ts"
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "migrate": "NODE_ENV=development sequelize-cli db:migrate",
+    "migrate:undo": "NODE_ENV=development sequelize-cli db:migrate:undo",
+    "migrate:undo:all": "NODE_ENV=development sequelize-cli db:migrate:undo:all",
+    "migration:create": "NODE_ENV=development sequelize-cli migration:create"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +29,8 @@
     "sequelize-typescript": "^2.1.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }

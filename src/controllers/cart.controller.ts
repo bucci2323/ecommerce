@@ -3,7 +3,7 @@ import { Cart, CartItem, Product } from '../models';
 
 export const createCart = async (req: Request, res: Response) => {
   try {
-    // Check if user already has a cart
+
     const existingCart = await Cart.findOne({
       where: { userId: req.user?.id }
     });
@@ -58,18 +58,18 @@ export const addCartItem = async (req: Request, res: Response) => {
   try {
     const { productId, quantity } = req.body;
 
-    // Validate input
+
     if (!productId || !quantity) {
       return res.status(400).json({ error: 'Product ID and quantity are required' });
     }
 
-    // Check if product exists
+
     const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Get or create cart
+
     let cart = await Cart.findOne({
       where: { userId: req.user?.id }
     });
@@ -80,7 +80,7 @@ export const addCartItem = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if item already exists in cart
+
     const existingItem = await CartItem.findOne({
       where: {
         cartId: cart.id,
@@ -89,7 +89,7 @@ export const addCartItem = async (req: Request, res: Response) => {
     });
 
     if (existingItem) {
-      // Update quantity if item exists
+
       await existingItem.update({ quantity: existingItem.quantity + quantity });
       return res.json({
         success: true,
@@ -98,7 +98,7 @@ export const addCartItem = async (req: Request, res: Response) => {
       });
     }
 
-    // Create new cart item
+
     const cartItem = await CartItem.create({
       cartId: cart.id,
       productId,
@@ -132,7 +132,7 @@ export const updateCartItem = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Cart item not found' });
     }
 
-    // Verify the cart belongs to the user
+
     const cart = await Cart.findByPk(cartItem.cartId);
     if (cart?.userId !== req.user?.id) {
       return res.status(403).json({ error: 'Not authorized to update this cart item' });
@@ -160,7 +160,7 @@ export const deleteCartItem = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Cart item not found' });
     }
 
-    // Verify the cart belongs to the user
+
     const cart = await Cart.findByPk(cartItem.cartId);
     if (cart?.userId !== req.user?.id) {
       return res.status(403).json({ error: 'Not authorized to delete this cart item' });

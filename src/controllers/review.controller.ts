@@ -5,7 +5,7 @@ export const createReview = async (req: Request, res: Response) => {
   try {
     const { userId, productId, rating, comment } = req.body;
 
-    // Validate required fields
+
     if (!userId || !productId || !rating) {
       return res.status(400).json({ error: 'User ID, product ID, and rating are required' });
     }
@@ -26,7 +26,7 @@ export const createReview = async (req: Request, res: Response) => {
       comment
     });
 
-    // Fetch the created review to ensure we have all fields
+
     const createdReview = await Review.findByPk(review.id);
     
     if (!createdReview) {

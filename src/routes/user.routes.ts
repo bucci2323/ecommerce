@@ -15,7 +15,7 @@ router.post('/', (async (req, res) => {
 }) as RequestHandler);
 
 
-// from here down are the routes that uses authenicationa nd authorization
+// from here down are the routes that uses authenication a nd authorization///////////////
 
 
 router.get('/', authenticate, (async (req, res) => {
