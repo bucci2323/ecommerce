@@ -42,7 +42,7 @@ export const authenticate = async (
       role: string;
     };
 
-    // Fetch the full user information from the database
+
     const user = await User.findByPk(decoded.id, {
       attributes: ['id', 'firstName', 'lastName', 'email', 'role']
     });
