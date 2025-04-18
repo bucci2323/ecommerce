@@ -8,7 +8,6 @@ import reviewRoutes from './review.routes';
 
 const router = express.Router();
 
-// API Routes
 router.use('/users', userRoutes);
 router.use('/products', productRoutes);
 router.use('/categories', categoryRoutes);

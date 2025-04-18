@@ -7,7 +7,7 @@ export class Product extends Model {
   public description!: string;
   public price!: number;
   public stock!: number;
-  public imageUrl!: string;
+
   public categoryId!: number;
   public createdAt!: Date;
   public updatedAt!: Date;
@@ -36,10 +36,6 @@ export class Product extends Model {
           type: DataTypes.INTEGER,
           allowNull: false,
           defaultValue: 0,
-        },
-        imageUrl: {
-          type: DataTypes.STRING,
-          allowNull: true,
         },
         categoryId: {
           type: DataTypes.INTEGER,
