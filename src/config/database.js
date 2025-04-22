@@ -3,32 +3,32 @@ require('dotenv').config();
 
 const config = {
   development: {
-    username: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '123456789',
-    database: process.env.MYSQL_DATABASE || 'ecommerce_db',
-    host: process.env.MYSQL_HOST || 'localhost',
+    username: process.env.MYSQL_USER ,
+    password: process.env.MYSQL_PASSWORD ,
+    database: process.env.MYSQL_DATABASE ,
+    host: process.env.MYSQL_HOST ,
     dialect: 'mysql',
     logging: false
   },
   test: {
-    username: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '123456789',
-    database: process.env.MYSQL_DATABASE || 'ecommerce_db',
-    host: process.env.MYSQL_HOST || 'localhost',
+    username: process.env.MYSQL_USER ,
+    password: process.env.MYSQL_PASSWORD ,
+    database: process.env.MYSQL_DATABASE ,
+    host: process.env.MYSQL_HOST ,
     dialect: 'mysql',
     logging: false
   },
   production: {
-    username: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || '123456789',
-    database: process.env.MYSQL_DATABASE || 'ecommerce_db',
-    host: process.env.MYSQL_HOST || 'localhost',
+    username: process.env.MYSQL_USER ,
+    password: process.env.MYSQL_PASSWORD ,
+    database: process.env.MYSQL_DATABASE ,
+    host: process.env.MYSQL_HOST ,
     dialect: 'mysql',
     logging: false
   }
 };
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV ;
 const currentConfig = config[env];
 
 const sequelize = new Sequelize(

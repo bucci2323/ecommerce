@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 if (!process.env.MYSQL_DATABASE || !process.env.MYSQL_USER || !process.env.MYSQL_PASSWORD || !process.env.MYSQL_HOST) {
-  throw new Error("Missing required MySQL environment variables");
+  throw new Error("Missing varables MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, or MYSQL_HOST in .env file");
 }
 
 const sequelize =

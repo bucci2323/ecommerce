@@ -16,17 +16,9 @@ router.use(authenticate);
 
 
 router.post('/', createCart as RequestHandler);
-
-
 router.get('/', getCart as RequestHandler);
-
-
 router.post('/items', addCartItem as RequestHandler);
-
-
 router.put('/items/:id', updateCartItem as RequestHandler);
-
-
 router.delete('/items/:id', deleteCartItem as RequestHandler);
 
 export default router; 
