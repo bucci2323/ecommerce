@@ -8,7 +8,7 @@ import { Review } from './review';
 import { Cart } from './cart';
 import { CartItem } from './cartItem';
 
-// Initialize all models
+
 User.initialize(sequelize);
 Product.initialize(sequelize);
 Category.initialize(sequelize);
@@ -18,7 +18,7 @@ Review.initialize(sequelize);
 Cart.initialize(sequelize);
 CartItem.initialize(sequelize);
 
-// Set up associations
+
 const models = {
   User,
   Product,
@@ -30,7 +30,7 @@ const models = {
   CartItem,
 };
 
-// Call associate on each model
+
 Object.values(models).forEach((model) => {
   if (model.associate) {
     model.associate(models);

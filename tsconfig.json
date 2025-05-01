@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
+
     "target": "es6",
     "module": "commonjs",
     "outDir": "./dist",
@@ -19,14 +19,14 @@
     "types": ["node", "express"],
 
     /* Type Checking */
-    "experimentalDecorators": true,                     /* Enable support for decorators. */
-    "emitDecoratorMetadata": true,                      /* Emit metadata for decorators. */
-    "useDefineForClassFields": true,                    /* Use ECMAScript-standard-compliant class fields. */
+    "experimentalDecorators": true,                   
+    "emitDecoratorMetadata": true,                      
+    "useDefineForClassFields": true,                
 
-    /* Module Resolution */
-    "allowSyntheticDefaultImports": true,               /* Allow default imports from modules without default exports. */
-    "strictPropertyInitialization": false               /* Disable strict checks for property initialization in constructors. */
+
+    "allowSyntheticDefaultImports": true,             
+    "strictPropertyInitialization": false               
   },
-  "include": ["src/**/*"],                               /* Include all TypeScript files in the src folder. */
-  "exclude": ["node_modules", "dist"]                   /* Exclude node_modules and output folder. */
+  "include": ["src/**/*"],                            
+  "exclude": ["node_modules", "dist"]                   
 }

@@ -4,7 +4,6 @@ export class Category extends Model {
   public id!: number;
   public name!: string;
   public description!: string;
-  public parentId!: number | null;
   public createdAt!: Date;
   public updatedAt!: Date;
 
@@ -24,18 +23,9 @@ export class Category extends Model {
           type: DataTypes.TEXT,
           allowNull: true,
         },
-        parentId: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-          references: {
-            model: 'categories',
-            key: 'id',
-          },
-        },
         createdAt: {
           type: DataTypes.DATE,
           allowNull: false,
-
         },
         updatedAt: {
           type: DataTypes.DATE,
@@ -54,14 +44,6 @@ export class Category extends Model {
     Category.hasMany(models.Product, {
       foreignKey: 'categoryId',
       as: 'products',
-    });
-    Category.belongsTo(models.Category, {
-      foreignKey: 'parentId',
-      as: 'parent',
-    });
-    Category.hasMany(models.Category, {
-      foreignKey: 'parentId',
-      as: 'subcategories',
     });
   }
 } 

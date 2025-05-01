@@ -10,7 +10,7 @@ export const createReview = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'User ID, product ID, and rating are required' });
     }
 
-    // Convert IDs to numbers
+
     const numericUserId = Number(userId);
     const numericProductId = Number(productId);
     const numericRating = Number(rating);
