@@ -80,23 +80,23 @@ export const addCartItem = async (req: Request, res: Response) => {
 
     const { productId, quantity } = req.body;
 
-    // Validate input
+
     if (!productId || !quantity) {
       return res.status(400).json({ error: 'Product ID and quantity are required' });
     }
 
-    // Validate quantity
+
     if (quantity < 1) {
       return res.status(400).json({ error: 'Quantity must be at least 1' });
     }
 
-    // Check if product exists
+
     const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Find or create cart
+
     let cart = await Cart.findOne({
       where: { userId: req.user.id }
     });
@@ -116,7 +116,7 @@ export const addCartItem = async (req: Request, res: Response) => {
       }
     }
 
-    // Double check cart existence
+
     if (!cart) {
       console.error('Cart is null after creation attempt');
       return res.status(500).json({ 
@@ -133,7 +133,7 @@ export const addCartItem = async (req: Request, res: Response) => {
       });
     }
 
-    // Check for existing item
+
     const existingItem = await CartItem.findOne({
       where: {
         cartId: cart.id,
@@ -142,7 +142,7 @@ export const addCartItem = async (req: Request, res: Response) => {
     });
 
     if (existingItem) {
-      // Update existing item
+
       await existingItem.update({ quantity: existingItem.quantity + quantity });
       const updatedItem = await CartItem.findByPk(existingItem.id, {
         include: [{
