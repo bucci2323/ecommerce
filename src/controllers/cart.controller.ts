@@ -3,9 +3,12 @@ import { Cart, CartItem, Product } from '../models';
 
 export const createCart = async (req: Request, res: Response) => {
   try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
 
     const existingCart = await Cart.findOne({
-      where: { userId: req.user?.id }
+      where: { userId: req.user.id }
     });
 
     if (existingCart) {
@@ -13,17 +16,27 @@ export const createCart = async (req: Request, res: Response) => {
     }
 
     const cart = await Cart.create({
-      userId: req.user?.id
+      userId: req.user.id
     });
+
+
+    const createdCart = await Cart.findByPk(cart.id);
+    
+    if (!createdCart) {
+      return res.status(500).json({ 
+        error: 'Failed to create cart',
+        details: 'Cart was not properly created'
+      });
+    }
 
     res.status(201).json({
       success: true,
       message: 'Cart created successfully',
-      cart
+      cart: createdCart
     });
   } catch (error) {
     console.error('Error creating cart:', error);
-    res.status(400).json({ 
+    res.status(500).json({ 
       error: 'Error creating cart',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -36,7 +49,11 @@ export const getCart = async (req: Request, res: Response) => {
       where: { userId: req.user?.id },
       include: [{
         model: CartItem,
-        include: [Product]
+        as: 'cartItems',
+        include: [{
+          model: Product,
+          as: 'product'
+        }]
       }]
     });
 
@@ -89,6 +106,7 @@ export const addCartItem = async (req: Request, res: Response) => {
         cart = await Cart.create({
           userId: req.user.id
         });
+        console.log('New cart created:', cart.id);
       } catch (error) {
         console.error('Error creating cart:', error);
         return res.status(500).json({ 
@@ -98,9 +116,21 @@ export const addCartItem = async (req: Request, res: Response) => {
       }
     }
 
-    // Verify cart was created
-    if (!cart || !cart.id) {
-      return res.status(500).json({ error: 'Failed to create or retrieve cart' });
+    // Double check cart existence
+    if (!cart) {
+      console.error('Cart is null after creation attempt');
+      return res.status(500).json({ 
+        error: 'Failed to create cart',
+        details: 'Cart creation returned null'
+      });
+    }
+
+    if (!cart.id) {
+      console.error('Cart ID is missing:', cart);
+      return res.status(500).json({ 
+        error: 'Invalid cart data',
+        details: 'Cart created but ID is missing'
+      });
     }
 
     // Check for existing item
@@ -114,13 +144,18 @@ export const addCartItem = async (req: Request, res: Response) => {
     if (existingItem) {
       // Update existing item
       await existingItem.update({ quantity: existingItem.quantity + quantity });
+      const updatedItem = await CartItem.findByPk(existingItem.id, {
+        include: [{
+          model: Product,
+          as: 'product'
+        }]
+      });
       return res.json({
         success: true,
         message: 'Cart item updated successfully',
-        item: existingItem
+        item: updatedItem
       });
     }
-
 
     try {
       const cartItem = await CartItem.create({
@@ -130,11 +165,18 @@ export const addCartItem = async (req: Request, res: Response) => {
       });
 
       const createdItem = await CartItem.findByPk(cartItem.id, {
-        include: [Product]
+        include: [{
+          model: Product,
+          as: 'product'
+        }]
       });
 
       if (!createdItem) {
-        return res.status(500).json({ error: 'Failed to retrieve created cart item' });
+        console.error('Failed to retrieve created cart item:', cartItem.id);
+        return res.status(500).json({ 
+          error: 'Failed to retrieve created cart item',
+          details: 'Cart item created but could not be retrieved'
+        });
       }
 
       res.status(201).json({
@@ -166,11 +208,16 @@ export const updateCartItem = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Valid quantity is required' });
     }
 
-    const cartItem = await CartItem.findByPk(req.params.id);
+    const cartItem = await CartItem.findByPk(req.params.id, {
+      include: [{
+        model: Product,
+        as: 'product'
+      }]
+    });
+    
     if (!cartItem) {
       return res.status(404).json({ error: 'Cart item not found' });
     }
-
 
     const cart = await Cart.findByPk(cartItem.cartId);
     if (cart?.userId !== req.user?.id) {
